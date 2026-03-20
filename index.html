@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To do list</title>
+</head>
+<body>
+    <div class="task-menu">
+        <form action="">
+            <input type="text" placeholder="Task" id="task-input">
+            <input type="date" placeholder="Due Date" id="due-date-input">
+            <button type="submit">Add</button>
+        </form>
+
+        <p>Total tasks: <span id="total-tasks">0</span></p>
+        <p>Completed tasks: <span id="completed-tasks">0</span></p>
+    </div>
+
+    <div class="task-filters">
+        <select name="type" id="task-type">
+            <option value="all">All</option>
+            <option value="completed">Completed</option>
+            <option value="pending">Pending</option>
+        </select>
+        <input type="date" placeholder="Filter by from Date" id="filter-fromDate">
+        <input type="date" placeholder="Filter by to Date" id="filter-toDate">
+        <button id="clear-completed">Clear</button>
+    </div>
+
+    <div class="to_do-list">
+        <ul>
+        </ul>
+    </div>
+
+    <script src="functions.js"></script>
+</body>
+</html>
