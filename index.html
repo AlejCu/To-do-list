@@ -10,6 +10,9 @@
         <form action="">
             <input type="text" placeholder="Task" id="task-input">
             <input type="date" placeholder="Due Date" id="due-date-input">
+            <select name="color" id="color-input">
+
+            </select>
             <button type="submit">Add</button>
         </form>
 
@@ -22,6 +25,9 @@
             <option value="all">All</option>
             <option value="completed">Completed</option>
             <option value="pending">Pending</option>
+        </select>
+        <select name="color-filter" id="filter-color">
+            <option value="">All Colors</option>
         </select>
         <input type="date" placeholder="Filter by from Date" id="filter-fromDate">
         <input type="date" placeholder="Filter by to Date" id="filter-toDate">
