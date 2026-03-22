@@ -5,6 +5,7 @@ const dueDateInput = document.getElementById('due-date-input');
 const colorInput = document.getElementById('color-input');
 const filterTypeSelect = document.getElementById('task-type');
 const colorFilterSelect = document.getElementById('filter-color');
+const importantFilterSelect = document.getElementById('important-filter');
 const clearCompletedButton = document.getElementById('clear-completed');
 const taskMainContainer = document.querySelector('ul');
 
@@ -23,6 +24,7 @@ const taskColor = {
 
 // Ok ahora lo que nos falta es el select de si es un issue de prioridad junto con su filtro y tambien el filtro por fecha, para la fecha estaba pensando en tomar el valor de la fecha como valor numerico y para el from date pues que busque el valor de la fecha de cada task y vea que sea mayor a la fecha seleccionada y para el to date que sea el valor de la fecha menor o igual a este. Tambien podemos añadir la opcion de cambiar el valor del color, la fecha y el flag de prioridad en cada task
 
+
 // Function to generate the task list
 function generateTaskList() {
     // Gets the value of the task type filter input to know which type of tasks to show in the list
@@ -40,6 +42,13 @@ function generateTaskList() {
             matchesColor = task.color === colorOfFilter;
         }
 
+        let matchesImportant = false;
+        if (importantFilterSelect.checked) {
+            matchesImportant = task.important === true;
+        } else {
+            matchesImportant = true;
+        }
+
         //Variable to check if the tasks match the type
         let matchesType = false;
         // Shows all the tasks
@@ -54,7 +63,7 @@ function generateTaskList() {
         if (typeOfFilter === 'pending') {
             matchesType = task.completed === false;
         }
-        return matchesType && matchesColor;
+        return matchesType && matchesColor && matchesImportant; 
     });
 
     // Generates a new li element for each task in the taskList array and appends it to the main container
@@ -66,6 +75,7 @@ function generateTaskList() {
             <input type="checkbox" class="task-checkbox" id="${task.id}" ${task.completed ? 'checked' : ''}>
             <span>${task.text} - Due: ${task.dueDate}</span>
             <button class="delete-button" data-id="${task.id}">Delete</button>
+            <input type="checkbox" class="priority-checkbox" id="${task.id}" ${task.important ? 'checked' : ''}>
         `;
         taskMainContainer.appendChild(taskContainer);
     });
@@ -156,6 +166,11 @@ colorFilterSelect.addEventListener('change', () => {
     generateTaskList();
 });
 
+// Listens to any changes on the checkbox element for the important filter and renders the list once again to show the updated information based on the selected filter
+importantFilterSelect.addEventListener('change', () => {
+    generateTaskList();
+});
+
 // Function to save the task list into the local storage as a string
 function saveTasksToLocalStorage() {
     localStorage.setItem('tasks', JSON.stringify(taskList));
@@ -178,14 +193,23 @@ function updateCompletedTasksCounter() {
 
 // Event listener for every change made only on the checkbox elements with the class task-checkbox
 document.addEventListener('change', (event) => {
+    // Converts the id value from a string to a number
+    let taskId = parseInt(event.target.id);
+    // Find the task in the task list that matches the id to only apply the changes to the corresponding task
+    const task = taskList.find(task => task.id === taskId);
+
     // Checks if the element contains the class
     if (event.target.classList.contains('task-checkbox')) {
-        //
-        let taskId = parseInt(event.target.id);
-        const task = taskList.find(task => task.id === taskId);
         if (task) {
             task.completed = event.target.checked;
             updateCompletedTasksCounter();
+            saveTasksToLocalStorage();
+        }
+    }
+
+    if (event.target.classList.contains('priority-checkbox')) {     
+        if (task) {
+            task.important = event.target.checked;
             saveTasksToLocalStorage();
         }
     }
