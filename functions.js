@@ -1,12 +1,19 @@
 // Variables getting the form and input fields to create tasks
+
+// Form input variables
 const addToDoMenu = document.querySelector('form');
 const addToDoInput = document.getElementById('task-input');
 const dueDateInput = document.getElementById('due-date-input');
 const colorInput = document.getElementById('color-input');
+
+// Filter variables
 const filterTypeSelect = document.getElementById('task-type');
 const colorFilterSelect = document.getElementById('filter-color');
 const importantFilterSelect = document.getElementById('important-filter');
-const clearCompletedButton = document.getElementById('clear-completed');
+const fromDateInput = document.getElementById('filter-fromDate');
+const toDateInput = document.getElementById('filter-toDate');
+
+// Task List variables
 const taskMainContainer = document.querySelector('ul');
 
 // Task list variable
@@ -22,8 +29,11 @@ const taskColor = {
     pink: '#ff69b4',
 }
 
-// Ok ahora lo que nos falta es el select de si es un issue de prioridad junto con su filtro y tambien el filtro por fecha, para la fecha estaba pensando en tomar el valor de la fecha como valor numerico y para el from date pues que busque el valor de la fecha de cada task y vea que sea mayor a la fecha seleccionada y para el to date que sea el valor de la fecha menor o igual a este. Tambien podemos añadir la opcion de cambiar el valor del color, la fecha y el flag de prioridad en cada task
+// Ahora nos hace falta el poder cambiar el color de las task que ya son parte de la lista, al igual que poder editar la fecha y el texto de las tareas, mi unico problema es que lo de el color, puede ser un dropdown sin problemas, y la fecha igual un date input, pero el texto tendria que ser editable mas que nada cuando le das click a algun boton de editar, que me parece que seria mas facil de implementar una vez se añada el estilizado de la pagina, de momento seria solo implementar el poder editar el color y la fecha
 
+// Hay que añadirles event listeners a los nuevos inputs para que al momento de cambiar los valores se genere el cambio en el array de tasks, solo modificando la task con el id que le corresponde y tambien tengo que añadirle al event listener del dom el que se generen las opciones de colores, que de hecho tengo que ver como hacer que se optimice eso para no tener que andar repitiendo ese codigo y que este solo en una function
+
+//----------------------------------------Functions----------------------------------------
 
 // Function to generate the task list
 function generateTaskList() {
@@ -36,17 +46,39 @@ function generateTaskList() {
     const filteredTaskList = taskList.filter(task => {
         // Variable that checks if the color matches the task color
         let matchesColor = false;
+        
+        // If there is no color selected on the filter, it shows all the tasks, and if there is a color selected, it makes sure to only show the tasks that match that color
         if (colorOfFilter === '') {
         matchesColor = true;
         } else {
             matchesColor = task.color === colorOfFilter;
         }
 
+        // Variable to check if the task is marked as important
         let matchesImportant = false;
+        // If there important filter is checked, it shows only the tasks marked as important and it it is not checked, it shows all the task instead
         if (importantFilterSelect.checked) {
             matchesImportant = task.important === true;
         } else {
             matchesImportant = true;
+        }
+
+        // Variables to check if the tasks due date match the filter dates
+        let matchesFromDate = true;
+        let matchesToDate = true;
+
+        // If there is a value entered on the from date, it filters the tasks to only show the ones with a due date greater or equal to the from date value
+        if (fromDateInput.value) {
+            const fromDateValue = new Date(fromDateInput.value);
+            const taskDueDate = new Date(task.dueDate);
+            matchesFromDate = taskDueDate >= fromDateValue;
+        }
+
+        // If there is a value entered on the to date, it filters the tasks to only show the ones with a due date less or equal to the to date value
+        if (toDateInput.value) {
+            const toDateValue = new Date(toDateInput.value);
+            const taskDueDate = new Date(task.dueDate);
+            matchesToDate = taskDueDate <= toDateValue;
         }
 
         //Variable to check if the tasks match the type
@@ -63,7 +95,7 @@ function generateTaskList() {
         if (typeOfFilter === 'pending') {
             matchesType = task.completed === false;
         }
-        return matchesType && matchesColor && matchesImportant; 
+        return matchesType && matchesColor && matchesImportant && matchesFromDate && matchesToDate; 
     });
 
     // Generates a new li element for each task in the taskList array and appends it to the main container
@@ -72,10 +104,16 @@ function generateTaskList() {
         taskContainer.style.backgroundColor = task.color;
         // Modify the html of each task if needed
         taskContainer.innerHTML = `
-            <input type="checkbox" class="task-checkbox" id="${task.id}" ${task.completed ? 'checked' : ''}>
-            <span>${task.text} - Due: ${task.dueDate}</span>
+            <label for="completed-${task.id}">Completed</label>
+            <input type="checkbox" class="task-checkbox" id="completed-${task.id}" ${task.completed ? 'checked' : ''}>
+            <p>${task.text}</p>
+            <select class="color-select" id="color-${task.id}">
+            </select>
+            <label for="due-date-${task.id}">Due Date:</label>
+            <input type="date" class="due-date-input" id="due-date-${task.id}" value="${task.dueDate}">
             <button class="delete-button" data-id="${task.id}">Delete</button>
-            <input type="checkbox" class="priority-checkbox" id="${task.id}" ${task.important ? 'checked' : ''}>
+            <label for="important-${task.id}">Important</label>
+            <input type="checkbox" class="priority-checkbox" id="important-${task.id}" ${task.important ? 'checked' : ''}>
         `;
         taskMainContainer.appendChild(taskContainer);
     });
@@ -92,84 +130,17 @@ function deleteTask(taskId) {
     saveTasksToLocalStorage();
 }
 
-// Event listener for the delete buttons inside the "ul" element
-taskMainContainer.addEventListener('click', (event) => {
-    const deleteButton = event.target.closest('.delete-button');
-
-    // No action if the button clicked is not a delete button
-    if (!deleteButton) return;
-
-    // Gets the id from the list item from the closest button clicked on and uses that value to run the deleteTask function
-    const taskIdValue = parseInt(deleteButton.getAttribute('data-id'));
-    deleteTask(taskIdValue);
-});
-
 // Function to clear the filters
 function clearFilters() {
     // Resets the values of all the filter options to show all tasks
     filterTypeSelect.value = 'all';
     colorFilterSelect.value = '';
+    importantFilterSelect.checked = false;
     document.getElementById('filter-fromDate').value = '';
     document.getElementById('filter-toDate').value = '';
     // Generates the task list again
     generateTaskList();
 };
-
-// Clears the filters when the clear filters button is clicked
-clearCompletedButton.addEventListener('click', clearFilters);
-
-document.addEventListener('DOMContentLoaded', () => {
-    const taskStorage = localStorage.getItem('tasks');
-
-    // Function to create the color options for each task created
-    function createColorOptions() {
-        // Creates a new options element for each color in the taskColors object and appends the name using the key value for each option
-        for (const [key, value] of Object.entries(taskColor)) {
-            const option = document.createElement('option');
-            option.value = value;
-            // Capitalizes the first letter of the color name
-            option.textContent = key.charAt(0).toUpperCase() + key.slice(1);
-            colorInput.appendChild(option);
-        }
-    }
-
-    // Function to create the color options for the filter
-    function createColorFilters() {
-        // Creates a new options element for each color in the taskColors object and appends the name using the key value for each option
-        for (const [key, value] of Object.entries(taskColor)) {
-            const option = document.createElement('option');
-            option.value = value;
-            // Capitalizes the first letter of the color name
-            option.textContent = key.charAt(0).toUpperCase() + key.slice(1);
-            colorFilterSelect.appendChild(option);
-        }
-    }
-
-    if (taskStorage) {
-        // If we have tasks in the local storage we convert the string back into an array to get assigned to the taskList variable and then it runs the generateTaskList function
-        taskList = JSON.parse(taskStorage);
-        generateTaskList();
-        updateCompletedTasksCounter();
-        updateTaskListCounter();
-        createColorOptions();
-        createColorFilters();
-    }
-});
-
-// Listens to any changes on the select element for the task type filter and renders the list once again to show the updated information based on the selected filter
-filterTypeSelect.addEventListener('change', () => {
-    generateTaskList();
-});
-
-// Listens to any changes on the select element for the task color filter and renders the list once again to show the updated information based on the selected filter
-colorFilterSelect.addEventListener('change', () => {
-    generateTaskList();
-});
-
-// Listens to any changes on the checkbox element for the important filter and renders the list once again to show the updated information based on the selected filter
-importantFilterSelect.addEventListener('change', () => {
-    generateTaskList();
-});
 
 // Function to save the task list into the local storage as a string
 function saveTasksToLocalStorage() {
@@ -190,30 +161,6 @@ function updateCompletedTasksCounter() {
     // Changes the value for the completedTasksCounter to match the lenght of the list of completed tasks
     completedTasksCounter.textContent = completedTasksList.length;
 };
-
-// Event listener for every change made only on the checkbox elements with the class task-checkbox
-document.addEventListener('change', (event) => {
-    // Converts the id value from a string to a number
-    let taskId = parseInt(event.target.id);
-    // Find the task in the task list that matches the id to only apply the changes to the corresponding task
-    const task = taskList.find(task => task.id === taskId);
-
-    // Checks if the element contains the class
-    if (event.target.classList.contains('task-checkbox')) {
-        if (task) {
-            task.completed = event.target.checked;
-            updateCompletedTasksCounter();
-            saveTasksToLocalStorage();
-        }
-    }
-
-    if (event.target.classList.contains('priority-checkbox')) {     
-        if (task) {
-            task.important = event.target.checked;
-            saveTasksToLocalStorage();
-        }
-    }
-});
 
 // Function to add a new task to the list
 function addTask(event) {
@@ -247,5 +194,96 @@ function addTask(event) {
     }
 };
 
-// Looks for the submision event for the task form and runs the addTask function when the form is submitted
+//----------------------------------------Event Listeners----------------------------------------
+
+// Event listener for changes in the document
+document.addEventListener('change', (event) => {
+    // Converts the id value from a string to a number
+    let taskId = parseInt(event.target.id.split('-')[1]);
+    // Find the task in the task list that matches the id to only apply the changes to the corresponding task
+    const task = taskList.find(task => task.id === taskId);
+
+    // Checks if there is a change on the class task-checkbox to know if the checkbox is marked as completed or unselected
+    if (event.target.classList.contains('task-checkbox')) {
+        if (task) {
+            task.completed = event.target.checked;
+            updateCompletedTasksCounter();
+            saveTasksToLocalStorage();
+        }
+    }
+
+    // Checks if there is a change on the class priority-checkbox to know if the checkbox is marked as important or unselected
+    if (event.target.classList.contains('priority-checkbox')) {     
+        if (task) {
+            task.important = event.target.checked;
+            saveTasksToLocalStorage();
+        }
+    }
+
+    // Checks if there is a change on the class filter-options to know if the user has changed any of the filter options and needs to update the task list
+    if (event.target.classList.contains('filter-options')) {
+        generateTaskList();
+    }
+});
+
+// Event listener for when the document is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Takes the tasks from the local storage and assigns them to the variable
+    const taskStorage = localStorage.getItem('tasks');
+
+    // Function to create the color options for each task created
+    function createColorOptions() {
+        // Creates a new options element for each color in the taskColors object and appends the name using the key value for each option
+        for (const [key, value] of Object.entries(taskColor)) {
+            const option = document.createElement('option');
+            option.value = value;
+            // Capitalizes the first letter of the color name
+            option.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+            colorInput.appendChild(option);
+        }
+    }
+
+    // Function to create the color options for the filter
+    function createColorFilters() {
+        // Creates a new options element for each color in the taskColors object and appends the name using the key value for each option
+        for (const [key, value] of Object.entries(taskColor)) {
+            const option = document.createElement('option');
+            option.value = value;
+            // Capitalizes the first letter of the color name
+            option.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+            colorFilterSelect.appendChild(option);
+        }
+    }
+
+    // If we have tasks in the local storage we convert the string back into an array to get assigned to the taskList variable and then it loads all the necessary information
+    if (taskStorage) {
+        taskList = JSON.parse(taskStorage);
+        generateTaskList();
+        updateCompletedTasksCounter();
+        updateTaskListCounter();
+        createColorOptions();
+        createColorFilters();
+    }
+});
+
+// Event listener for when there is a click on the document
+document.addEventListener('click', (event) => {
+    if (event.target.id === 'clear-filters') {
+        clearFilters();
+    }
+});
+
+// Event listener for the delete buttons inside the "ul" element
+taskMainContainer.addEventListener('click', (event) => {
+    const deleteButton = event.target.closest('.delete-button');
+
+    // No action if the button clicked is not a delete button
+    if (!deleteButton) return;
+
+    // Gets the id from the list item from the closest button clicked on and uses that value to run the deleteTask function
+    const taskIdValue = parseInt(deleteButton.getAttribute('data-id'));
+    deleteTask(taskIdValue);
+});
+
+// Event listener for the form submission to add a new task
 addToDoMenu.addEventListener('submit', addTask);

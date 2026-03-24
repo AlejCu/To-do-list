@@ -21,19 +21,19 @@
     </div>
 
     <div class="task-filters">
-        <select name="type" id="task-type">
+        <select name="type" id="task-type" class="filter-options">
             <option value="all">All</option>
             <option value="completed">Completed</option>
             <option value="pending">Pending</option>
         </select>
-        <select name="color-filter" id="filter-color">
+        <select name="color-filter" id="filter-color" class="filter-options">
             <option value="">All Colors</option>
         </select>
-        <input type="date" placeholder="Filter by from Date" id="filter-fromDate">
-        <input type="date" placeholder="Filter by to Date" id="filter-toDate">
-        <input type="checkbox" id="important-filter">
+        <input type="date" placeholder="Filter by from Date" id="filter-fromDate" class="filter-options">
+        <input type="date" placeholder="Filter by to Date" id="filter-toDate" class="filter-options">
+        <input type="checkbox" id="important-filter" class="filter-options">
         <label for="important-filter">Important</label>
-        <button id="clear-completed">Clear</button>
+        <button id="clear-filters" class="filter-options">Clear</button>
     </div>
 
     <div class="to_do-list">
