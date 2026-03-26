@@ -15,6 +15,7 @@ const toDateInput = document.getElementById('filter-toDate');
 
 // Task List variables
 const taskMainContainer = document.querySelector('ul');
+const taskColorSelect = document.getElementsByClassName('color-select');
 
 // Task list variable
 let taskList = [];
@@ -115,6 +116,8 @@ function generateTaskList() {
             <label for="important-${task.id}">Important</label>
             <input type="checkbox" class="priority-checkbox" id="important-${task.id}" ${task.important ? 'checked' : ''}>
         `;
+
+        taskColorSelect.value = task.color;
         taskMainContainer.appendChild(taskContainer);
     });
 };
@@ -233,25 +236,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to create the color options for each task created
     function createColorOptions() {
-        // Creates a new options element for each color in the taskColors object and appends the name using the key value for each option
-        for (const [key, value] of Object.entries(taskColor)) {
-            const option = document.createElement('option');
-            option.value = value;
-            // Capitalizes the first letter of the color name
-            option.textContent = key.charAt(0).toUpperCase() + key.slice(1);
-            colorInput.appendChild(option);
-        }
-    }
 
-    // Function to create the color options for the filter
-    function createColorFilters() {
-        // Creates a new options element for each color in the taskColors object and appends the name using the key value for each option
-        for (const [key, value] of Object.entries(taskColor)) {
+        // Function to capizalize the first letter for the color options
+        function capitalizeOption(option) {
+            return option.charAt(0).toUpperCase() + option.slice(1);
+        }
+
+        // Function to create an option element for each color choice within the taskColor object
+        function createOption(key, value) {
             const option = document.createElement('option');
             option.value = value;
-            // Capitalizes the first letter of the color name
-            option.textContent = key.charAt(0).toUpperCase() + key.slice(1);
-            colorFilterSelect.appendChild(option);
+            // Use the capitalize function on the text value for each color
+            option.textContent = capitalizeOption(key);
+            return option;
+        }
+
+        // Creates a new options element for each color in the taskColors object and appends the name using the key value for each option
+        for (const [key, value] of Object.entries(taskColor)) {
+            // Variables to create the color options for each select element
+            const optionTaskCreate = createOption(key, value);
+            const optionFilter = createOption(key, value);
+
+            // Appends the color options to each select element
+            colorInput.appendChild(optionTaskCreate);
+            colorFilterSelect.appendChild(optionFilter);
+
+            // Loops through each taskColorSelect element to append the color options 
+            for (let select of taskColorSelect) {
+                select.appendChild(createOption(key, value));
+            }
         }
     }
 
@@ -261,9 +274,9 @@ document.addEventListener('DOMContentLoaded', () => {
         generateTaskList();
         updateCompletedTasksCounter();
         updateTaskListCounter();
-        createColorOptions();
-        createColorFilters();
     }
+
+    createColorOptions();
 });
 
 // Event listener for when there is a click on the document
