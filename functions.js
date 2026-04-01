@@ -5,6 +5,7 @@ const addToDoMenu = document.querySelector('form');
 const addToDoInput = document.getElementById('task-input');
 const dueDateInput = document.getElementById('due-date-input');
 const colorInput = document.getElementById('color-input');
+const SubmitError = document.getElementById('submission-error');
 
 // Filter variables
 const filterTypeSelect = document.getElementById('task-type');
@@ -15,7 +16,6 @@ const toDateInput = document.getElementById('filter-toDate');
 
 // Task List variables
 const taskMainContainer = document.querySelector('ul');
-const taskColorSelect = document.getElementsByClassName('color-select');
 
 // Task list variable
 let taskList = [];
@@ -28,13 +28,43 @@ const taskColor = {
     blue: '#1982c4',
     purple: '#6a4c93',
     pink: '#ff69b4',
-}
+} 
 
-// Ahora nos hace falta el poder cambiar el color de las task que ya son parte de la lista, al igual que poder editar la fecha y el texto de las tareas, mi unico problema es que lo de el color, puede ser un dropdown sin problemas, y la fecha igual un date input, pero el texto tendria que ser editable mas que nada cuando le das click a algun boton de editar, que me parece que seria mas facil de implementar una vez se añada el estilizado de la pagina, de momento seria solo implementar el poder editar el color y la fecha
-
-// Hay que añadirles event listeners a los nuevos inputs para que al momento de cambiar los valores se genere el cambio en el array de tasks, solo modificando la task con el id que le corresponde y tambien tengo que añadirle al event listener del dom el que se generen las opciones de colores, que de hecho tengo que ver como hacer que se optimice eso para no tener que andar repitiendo ese codigo y que este solo en una function
+// Solo falta añadir los filtros para las tareas de hoy y tareas futuras al igual que añadir el editar el texto de las tasks despues de el estilizado, terminare los botones de filtro, añadire estilos y luego avanzare en la funcionalidad de editar el texto de las task
 
 //----------------------------------------Functions----------------------------------------
+
+ // Function to create the color options for each task created
+function createColorOptions() {
+
+    // Function to capizalize the first letter for the color options
+    function capitalizeOption(option) {
+        return option.charAt(0).toUpperCase() + option.slice(1);
+    }
+
+    // Function to create an option element for each color choice within the taskColor object
+    function createOption(key, value) {
+        const option = document.createElement('option');
+        option.value = value;
+        // Use the capitalize function on the text value for each color
+        option.textContent = capitalizeOption(key);
+        return option;
+    }
+
+    // Prevent duplicate options from being added if this function runs again
+    if (colorInput.children.length > 1) return;
+
+    // Creates a new options element for each color in the taskColors object and appends the name using the key value for each option
+    for (const [key, value] of Object.entries(taskColor)) {
+        // Variables to create the color options for each select element
+        const optionTaskCreate = createOption(key, value);
+        const optionFilter = createOption(key, value);
+
+        // Appends the color options to each select element
+        colorInput.appendChild(optionTaskCreate);
+        colorFilterSelect.appendChild(optionFilter);
+    }
+}
 
 // Function to generate the task list
 function generateTaskList() {
@@ -45,6 +75,7 @@ function generateTaskList() {
 
     // Filtered list
     const filteredTaskList = taskList.filter(task => {
+
         // Variable that checks if the color matches the task color
         let matchesColor = false;
         
@@ -110,14 +141,27 @@ function generateTaskList() {
             <p>${task.text}</p>
             <select class="color-select" id="color-${task.id}">
             </select>
-            <label for="due-date-${task.id}">Due Date:</label>
-            <input type="date" class="due-date-input" id="due-date-${task.id}" value="${task.dueDate}">
+            <label for="dueDate-${task.id}">Due Date:</label>
+            <input type="date" class="due-date-input" id="dueDate-${task.id}" value="${task.dueDate}">
             <button class="delete-button" data-id="${task.id}">Delete</button>
             <label for="important-${task.id}">Important</label>
             <input type="checkbox" class="priority-checkbox" id="important-${task.id}" ${task.important ? 'checked' : ''}>
         `;
 
-        taskColorSelect.value = task.color;
+        // Creates the color options for each task using the values from the taskColor object and sets the selected value to match the color of the task
+        const taskColorSelectElement = taskContainer.querySelector('.color-select');
+        for (const [key, value] of Object.entries(taskColor)) {
+            // Creates an option element for each color choice within the taskColor object and takes de value from each option
+            const option = document.createElement('option');
+            option.value = value;
+            // Capitalizes the first letter of the color name for the option text
+            option.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+            // Sets the selected value for the color select element to match the color of the task
+            if (value === task.color) option.selected = true;
+            // Adds the color option to the select element
+            taskColorSelectElement.appendChild(option);
+        }
+
         taskMainContainer.appendChild(taskContainer);
     });
 };
@@ -131,6 +175,7 @@ function deleteTask(taskId) {
     updateTaskListCounter();
     updateCompletedTasksCounter();
     saveTasksToLocalStorage();
+    createColorOptions();
 }
 
 // Function to clear the filters
@@ -174,8 +219,8 @@ function addTask(event) {
     const dueDate = dueDateInput.value;
     const taskColor = colorInput.value;
 
-    // If there is text in the task input field, it creates a new task object with its values and pushes that to the taskList object, then it clears the input fields for the next task
-    if (taskText) {
+    // If there is text in the task input field and all form fields are filled, it creates a new task object with its values and pushes that to the taskList object
+    if (taskText && dueDate && taskColor) {
         const newTask = {
             id: Date.now(),
             text: taskText,
@@ -188,12 +233,15 @@ function addTask(event) {
         addToDoInput.value = '';
         dueDateInput.value = '';
         colorInput.value = '';
-        console.log(taskList);
         // Runs the generateTaskList function to update the task list with the new task
         generateTaskList();
         updateTaskListCounter();
         // Runs the saveTasksToLocalStorage function to save the updated task list to local storage
         saveTasksToLocalStorage();
+        createColorOptions();
+        SubmitError.textContent = '';
+    } else {
+        SubmitError.textContent = 'Please fill in all of the fields to add a task.';
     }
 };
 
@@ -227,46 +275,34 @@ document.addEventListener('change', (event) => {
     if (event.target.classList.contains('filter-options')) {
         generateTaskList();
     }
+
+    // Looks for the color-select class to know if the value for the color was changed
+    if (event.target.classList.contains('color-select')) {
+        if (task) {
+            // Updates the color value
+            task.color = event.target.value;
+            generateTaskList();
+            saveTasksToLocalStorage();
+            createColorOptions()
+        }
+    }
+
+    // Looks for the due-date-input class to know if the value for the due date was changed
+    if (event.target.classList.contains('due-date-input')) {
+        if (task) {
+            // Updates the due date value
+            task.dueDate = event.target.value;
+            generateTaskList();
+            saveTasksToLocalStorage();
+            createColorOptions()
+        }
+    }
 });
 
 // Event listener for when the document is loaded
 document.addEventListener('DOMContentLoaded', () => {
     // Takes the tasks from the local storage and assigns them to the variable
     const taskStorage = localStorage.getItem('tasks');
-
-    // Function to create the color options for each task created
-    function createColorOptions() {
-
-        // Function to capizalize the first letter for the color options
-        function capitalizeOption(option) {
-            return option.charAt(0).toUpperCase() + option.slice(1);
-        }
-
-        // Function to create an option element for each color choice within the taskColor object
-        function createOption(key, value) {
-            const option = document.createElement('option');
-            option.value = value;
-            // Use the capitalize function on the text value for each color
-            option.textContent = capitalizeOption(key);
-            return option;
-        }
-
-        // Creates a new options element for each color in the taskColors object and appends the name using the key value for each option
-        for (const [key, value] of Object.entries(taskColor)) {
-            // Variables to create the color options for each select element
-            const optionTaskCreate = createOption(key, value);
-            const optionFilter = createOption(key, value);
-
-            // Appends the color options to each select element
-            colorInput.appendChild(optionTaskCreate);
-            colorFilterSelect.appendChild(optionFilter);
-
-            // Loops through each taskColorSelect element to append the color options 
-            for (let select of taskColorSelect) {
-                select.appendChild(createOption(key, value));
-            }
-        }
-    }
 
     // If we have tasks in the local storage we convert the string back into an array to get assigned to the taskList variable and then it loads all the necessary information
     if (taskStorage) {
@@ -298,5 +334,27 @@ taskMainContainer.addEventListener('click', (event) => {
     deleteTask(taskIdValue);
 });
 
+// Event listener for the "Enter" key to create a new task when using the task creation form
+addToDoMenu.addEventListener('keydown', (event) => {
+    // If the focus is on the task creation form and there is a value entered on the task then it creates the task and clears the input fields
+    if (addToDoMenu.contains(addToDoInput) && addToDoInput.value.trim() !== '' && dueDateInput.value.trim() !== '' && colorInput.value.trim() !== '' && event.key === 'Enter') {
+        event.preventDefault();
+        addTask(event);
+        SubmitError.textContent = '';
+    }
+    // If there is no value on one of the form fields, it throws an error message asking to fill in all the fields to be able to create a task
+    else if (addToDoMenu.contains(addToDoInput) && event.key === 'Enter') {
+        event.preventDefault();
+        SubmitError.textContent = 'Please fill in all of the fields to add a task.';
+    }
+});
+
 // Event listener for the form submission to add a new task
-addToDoMenu.addEventListener('submit', addTask);
+addToDoMenu.addEventListener('submit', (event) => {
+    if (addToDoInput.value.trim() === '' || dueDateInput.value.trim() === '' || colorInput.value.trim() === '') {
+        event.preventDefault();
+        SubmitError.textContent = 'Please fill in all of the fields to add a task.';
+        return;
+    }
+    addTask(event);
+});
