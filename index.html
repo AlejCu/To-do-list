@@ -11,10 +11,12 @@
             <input type="text" placeholder="Task" id="task-input">
             <input type="date" placeholder="Due Date" id="due-date-input">
             <select name="color" id="color-input">
-
+                <option value="" disabled selected hidden>Select color</option>
             </select>
             <button type="submit">Add</button>
         </form>
+
+        <span id="submission-error"></span>
 
         <p>Total tasks: <span id="total-tasks">0</span></p>
         <p>Completed tasks: <span id="completed-tasks">0</span></p>
@@ -32,6 +34,8 @@
         <input type="date" placeholder="Filter by from Date" id="filter-fromDate" class="filter-options">
         <input type="date" placeholder="Filter by to Date" id="filter-toDate" class="filter-options">
         <input type="checkbox" id="important-filter" class="filter-options">
+        <button id="today-filter" class="filter-options">Today Tasks</button>
+        <button id="future-filter" class="filter-options">Future Tasks</button>
         <label for="important-filter">Important</label>
         <button id="clear-filters" class="filter-options">Clear</button>
     </div>
