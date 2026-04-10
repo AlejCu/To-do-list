@@ -3,23 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/index.css">
     <title>To do list</title>
 </head>
 <body>
     <div class="task-menu">
         <form action="">
-            <input type="text" placeholder="Task" id="task-input">
-            <input type="date" placeholder="Due Date" id="due-date-input">
-            <select name="color" id="color-input">
+            <input type="text" placeholder="Task" id="task-input" class="add-task-input">
+            <input type="date" placeholder="Due Date" id="due-date-input" class="add-task-input">
+            <select name="color" id="color-input" class="add-task-input">
                 <option value="" disabled selected hidden>Select color</option>
             </select>
             <button type="submit">Add</button>
         </form>
 
-        <span id="submission-error"></span>
+        <div class="sub-error-container">
+            <span id="submission-error"></span>
+        </div>
 
-        <p>Total tasks: <span id="total-tasks">0</span></p>
-        <p>Completed tasks: <span id="completed-tasks">0</span></p>
+        <div class="task-counters">
+            <p>Total tasks <span id="total-tasks">0</span></p>
+            <p>Completed tasks <span id="completed-tasks">0</span></p>
+            <p>Pending tasks <span id="pending-tasks">0</span></p>
+        </div>
     </div>
 
     <div class="task-filters">
@@ -33,10 +39,10 @@
         </select>
         <input type="date" placeholder="Filter by from Date" id="filter-fromDate" class="filter-options">
         <input type="date" placeholder="Filter by to Date" id="filter-toDate" class="filter-options">
+        <label for="important-filter">Important</label>
         <input type="checkbox" id="important-filter" class="filter-options">
         <button id="today-filter" class="filter-options">Today Tasks</button>
         <button id="future-filter" class="filter-options">Future Tasks</button>
-        <label for="important-filter">Important</label>
         <button id="clear-filters" class="filter-options">Clear</button>
     </div>
 
