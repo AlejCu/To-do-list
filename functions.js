@@ -13,12 +13,14 @@ const colorFilterSelect = document.getElementById('filter-color');
 const importantFilterSelect = document.getElementById('important-filter');
 const fromDateInput = document.getElementById('filter-fromDate');
 const toDateInput = document.getElementById('filter-toDate');
+const todayFilter = document.getElementById('today-filter');
 
 // Task List variables
 const taskMainContainer = document.querySelector('ul');
 
 // Task list variable
 let taskList = [];
+let showTodayTasks = false;
 
 // Task color selection variable
 const taskColor = {
@@ -31,6 +33,7 @@ const taskColor = {
 } 
 
 // Solo falta añadir los filtros para las tareas de hoy y tareas futuras al igual que añadir el editar el texto de las tasks despues de el estilizado, terminare los botones de filtro, añadire estilos y luego avanzare en la funcionalidad de editar el texto de las task
+// Oye puedom añadir un contador de pending tasks igual
 
 //----------------------------------------Functions----------------------------------------
 
@@ -75,6 +78,8 @@ function generateTaskList() {
 
     // Filtered list
     const filteredTaskList = taskList.filter(task => {
+
+    
 
         // Variable that checks if the color matches the task color
         let matchesColor = false;
@@ -133,20 +138,39 @@ function generateTaskList() {
     // Generates a new li element for each task in the taskList array and appends it to the main container
     filteredTaskList.forEach(task => {
         const taskContainer = document.createElement('li');
-        taskContainer.style.backgroundColor = task.color;
+        //const taskColorContainer = getElementbyClassName('task-left');
+        //taskColorContainer.style.backgroundColor = task.color;
         // Modify the html of each task if needed
         taskContainer.innerHTML = `
-            <label for="completed-${task.id}">Completed</label>
-            <input type="checkbox" class="task-checkbox" id="completed-${task.id}" ${task.completed ? 'checked' : ''}>
-            <p>${task.text}</p>
-            <select class="color-select" id="color-${task.id}">
-            </select>
-            <label for="dueDate-${task.id}">Due Date:</label>
-            <input type="date" class="due-date-input" id="dueDate-${task.id}" value="${task.dueDate}">
-            <button class="delete-button" data-id="${task.id}">Delete</button>
-            <label for="important-${task.id}">Important</label>
-            <input type="checkbox" class="priority-checkbox" id="important-${task.id}" ${task.important ? 'checked' : ''}>
+            <div class="task-right">
+                <div class="task-text">
+                    <p>${task.text}</p>
+                </div>
+                <div class="task-dueDate">
+                    <label for="dueDate-${task.id}">Due Date:</label>
+                    <input type="date" class="due-date-input" id="dueDate-${task.id}" value="${task.dueDate}">
+                </div>
+            </div>
+            <div class="task-left">
+                <select class="color-select" id="color-${task.id}">
+                </select>
+                <div class="task-checkbox">
+                    <div class="task-checkbox-container">
+                        <label for="important-${task.id}">Important</label>
+                        <input type="checkbox" class="priority-checkbox" id="important-${task.id}" ${task.important ? 'checked' : ''}>
+                    </div>
+                    <div class="task-checkbox-container">
+                        <label for="completed-${task.id}">Completed</label>
+                        <input type="checkbox" class="task-checkbox" id="completed-${task.id}" ${task.completed ? 'checked' : ''}>
+                    </div>
+                </div>
+                <button class="delete-button" data-id="${task.id}">Delete</button>
+            </div>
         `;
+
+        // Add the task color to the left part of the li container
+        const taskLeft = taskContainer.querySelector('.task-left');
+        taskLeft.style.backgroundColor = task.color;
 
         // Creates the color options for each task using the values from the taskColor object and sets the selected value to match the color of the task
         const taskColorSelectElement = taskContainer.querySelector('.color-select');
@@ -174,6 +198,7 @@ function deleteTask(taskId) {
     generateTaskList();
     updateTaskListCounter();
     updateCompletedTasksCounter();
+    updatePendingTasksCounter();
     saveTasksToLocalStorage();
     createColorOptions();
 }
@@ -210,6 +235,14 @@ function updateCompletedTasksCounter() {
     completedTasksCounter.textContent = completedTasksList.length;
 };
 
+function updatePendingTasksCounter() {
+    const pendingTasksCounter = document.getElementById('pending-tasks');
+    // Filters the taskList to only look for the tasks with the completed value
+    const pendingTasksList = taskList.filter(task => task.completed === false);
+    // Changes the value for the pendingTasksCounter to match the lenght of the list of pending tasks
+    pendingTasksCounter.textContent = pendingTasksList.length;
+};
+
 // Function to add a new task to the list
 function addTask(event) {
     // Avoids reloading the page when the form is submitted
@@ -241,7 +274,7 @@ function addTask(event) {
         createColorOptions();
         SubmitError.textContent = '';
     } else {
-        SubmitError.textContent = 'Please fill in all of the fields to add a task.';
+        SubmitError.textContent = '*Please fill in all of the fields to add a task.';
     }
 };
 
@@ -259,6 +292,7 @@ document.addEventListener('change', (event) => {
         if (task) {
             task.completed = event.target.checked;
             updateCompletedTasksCounter();
+            updatePendingTasksCounter();
             saveTasksToLocalStorage();
         }
     }
@@ -309,6 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
         taskList = JSON.parse(taskStorage);
         generateTaskList();
         updateCompletedTasksCounter();
+        updatePendingTasksCounter()
         updateTaskListCounter();
     }
 
@@ -318,7 +353,13 @@ document.addEventListener('DOMContentLoaded', () => {
 // Event listener for when there is a click on the document
 document.addEventListener('click', (event) => {
     if (event.target.id === 'clear-filters') {
+        showTodayTasks = false;
         clearFilters();
+    }
+
+    if (event.target.id === 'today-filter') {
+        showTodayTasks = true;
+        generateTaskList();
     }
 });
 
@@ -345,7 +386,7 @@ addToDoMenu.addEventListener('keydown', (event) => {
     // If there is no value on one of the form fields, it throws an error message asking to fill in all the fields to be able to create a task
     else if (addToDoMenu.contains(addToDoInput) && event.key === 'Enter') {
         event.preventDefault();
-        SubmitError.textContent = 'Please fill in all of the fields to add a task.';
+        SubmitError.textContent = '*Please fill in all of the fields to add a task.';
     }
 });
 
@@ -353,7 +394,7 @@ addToDoMenu.addEventListener('keydown', (event) => {
 addToDoMenu.addEventListener('submit', (event) => {
     if (addToDoInput.value.trim() === '' || dueDateInput.value.trim() === '' || colorInput.value.trim() === '') {
         event.preventDefault();
-        SubmitError.textContent = 'Please fill in all of the fields to add a task.';
+        SubmitError.textContent = '*Please fill in all of the fields to add a task.';
         return;
     }
     addTask(event);
