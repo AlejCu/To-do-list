@@ -79,8 +79,6 @@ function generateTaskList() {
     // Filtered list
     const filteredTaskList = taskList.filter(task => {
 
-    
-
         // Variable that checks if the color matches the task color
         let matchesColor = false;
         
@@ -144,27 +142,29 @@ function generateTaskList() {
         taskContainer.innerHTML = `
             <div class="task-right">
                 <div class="task-text">
-                    <p>${task.text}</p>
+                    <input type="text" class="task-text-input" id="text-${task.id}" value="${task.text}">
                 </div>
-                <div class="task-dueDate">
-                    <label for="dueDate-${task.id}">Due Date:</label>
-                    <input type="date" class="due-date-input" id="dueDate-${task.id}" value="${task.dueDate}">
+                <div class="task-right-container">
+                    <div class="task-dueDate">
+                        <label for="dueDate-${task.id}">Due Date:</label>
+                        <input type="date" class="due-date-input" id="dueDate-${task.id}" value="${task.dueDate}">
+                    </div>
+                    <div class="tasks">
+                        <div class="task-checkbox-container">
+                            <label for="important-${task.id}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M320 496C342.1 496 360 513.9 360 536C360 558.1 342.1 576 320 576C297.9 576 280 558.1 280 536C280 513.9 297.9 496 320 496zM320 64C346.5 64 368 85.5 368 112C368 112.6 368 113.1 368 113.7L352 417.7C351.1 434.7 337 448 320 448C303 448 289 434.7 288 417.7L272 113.7C272 113.1 272 112.6 272 112C272 85.5 293.5 64 320 64z"/></svg></label>
+                            <input type="checkbox" class="priority-checkbox" id="important-${task.id}" ${task.important ? 'checked' : ''}>
+                        </div>
+                        <div class="task-checkbox-container">
+                            <label for="completed-${task.id}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M416 64C433.7 64 448 78.3 448 96L448 128L480 128C515.3 128 544 156.7 544 192L544 480C544 515.3 515.3 544 480 544L160 544C124.7 544 96 515.3 96 480L96 192C96 156.7 124.7 128 160 128L192 128L192 96C192 78.3 206.3 64 224 64C241.7 64 256 78.3 256 96L256 128L384 128L384 96C384 78.3 398.3 64 416 64zM438 225.7C427.3 217.9 412.3 220.3 404.5 231L285.1 395.2L233 343.1C223.6 333.7 208.4 333.7 199.1 343.1C189.8 352.5 189.7 367.7 199.1 377L271.1 449C276.1 454 283 456.5 289.9 456C296.8 455.5 303.3 451.9 307.4 446.2L443.3 259.2C451.1 248.5 448.7 233.5 438 225.7z"/></svg></label>
+                            <input type="checkbox" class="task-checkbox" id="completed-${task.id}" ${task.completed ? 'checked' : ''}>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="task-left">
                 <select class="color-select" id="color-${task.id}">
                 </select>
-                <div class="task-checkbox">
-                    <div class="task-checkbox-container">
-                        <label for="important-${task.id}">Important</label>
-                        <input type="checkbox" class="priority-checkbox" id="important-${task.id}" ${task.important ? 'checked' : ''}>
-                    </div>
-                    <div class="task-checkbox-container">
-                        <label for="completed-${task.id}">Completed</label>
-                        <input type="checkbox" class="task-checkbox" id="completed-${task.id}" ${task.completed ? 'checked' : ''}>
-                    </div>
-                </div>
-                <button class="delete-button" data-id="${task.id}">Delete</button>
+                <button class="delete-button" data-id="${task.id}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M232.7 69.9C237.1 56.8 249.3 48 263.1 48L377 48C390.8 48 403 56.8 407.4 69.9L416 96L512 96C529.7 96 544 110.3 544 128C544 145.7 529.7 160 512 160L128 160C110.3 160 96 145.7 96 128C96 110.3 110.3 96 128 96L224 96L232.7 69.9zM128 208L512 208L512 512C512 547.3 483.3 576 448 576L192 576C156.7 576 128 547.3 128 512L128 208zM216 272C202.7 272 192 282.7 192 296L192 488C192 501.3 202.7 512 216 512C229.3 512 240 501.3 240 488L240 296C240 282.7 229.3 272 216 272zM320 272C306.7 272 296 282.7 296 296L296 488C296 501.3 306.7 512 320 512C333.3 512 344 501.3 344 488L344 296C344 282.7 333.3 272 320 272zM424 272C410.7 272 400 282.7 400 296L400 488C400 501.3 410.7 512 424 512C437.3 512 448 501.3 448 488L448 296C448 282.7 437.3 272 424 272z"/></svg></button>
             </div>
         `;
 
@@ -326,6 +326,17 @@ document.addEventListener('change', (event) => {
         if (task) {
             // Updates the due date value
             task.dueDate = event.target.value;
+            generateTaskList();
+            saveTasksToLocalStorage();
+            createColorOptions()
+        }
+    }
+
+    // Looks for the task-text-input class to know if the value for the task text was changed
+    if (event.target.classList.contains('task-text-input')) {
+        if (task) {
+            // Updates the text value
+            task.text = event.target.value;
             generateTaskList();
             saveTasksToLocalStorage();
             createColorOptions()
