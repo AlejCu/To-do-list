@@ -34,7 +34,7 @@ body {
   border-radius: 0 5px 5px 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   color: var(--text-color);
-  width: 100dvw;
+  width: 100%;
   padding: 20px;
 }
 .task-menu .sub-error-container {
@@ -110,95 +110,157 @@ body {
 .task-filters {
   display: flex;
   flex-direction: row;
-  gap: 10px;
-  padding: 10px;
-  border-radius: 5px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 25px;
+  border-radius: 12px;
   color: var(--text-color);
   width: 100%;
-  padding: 20px;
+  background: linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 .task-filters .filter-options {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   justify-content: center;
   align-items: center;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1.5px solid #ddd;
+  background-color: #fff;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+.task-filters .filter-options:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 8px rgba(238, 138, 44, 0.3);
+  background-color: rgba(238, 138, 44, 0.02);
+}
+.task-filters .filter-options:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 .task-filters .filter-options label {
   font-weight: 500;
-}
-.task-filters .filter-options select,
-.task-filters .filter-options input {
-  padding: 5px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-.task-filters .filter-options select:focus,
-.task-filters .filter-options input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 6px rgba(219, 116, 45, 0.5);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 .task-filters button {
-  padding: 10px 20px;
+  padding: 10px 18px;
   background-color: var(--details-color);
-  color: #fff;
-  border-radius: 5px;
-  transition: transform 0.1s ease-out;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-.task-filters button:hover {
-  transform: scale(1.03);
-  transition: transform 0.1s ease-in;
+  color: var(--text-color);
+  border-radius: 8px;
+  border: none;
+  font-weight: 500;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(92, 76, 65, 0.2);
   cursor: pointer;
 }
+.task-filters button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(92, 76, 65, 0.3);
+}
 .task-filters button:active {
-  transform: 0.1s ease-out;
-  transform: scale(0.97);
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(92, 76, 65, 0.2);
 }
 .task-filters #clear-filters {
-  background-color: var(--details-color2);
+  background-color: #e74c3c;
+  color: var(--background-color2);
+}
+.task-filters #clear-filters:hover {
+  background-color: #c0392b;
 }
 
 /* Task List styles */
 .to_do-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 10px;
-  border-radius: 5px;
-  color: var(--text-color);
+  gap: 16px;
+  padding: 25px;
+  border-radius: 12px;
+  color: #000;
   width: 100%;
-  padding: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 .to_do-list ul {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  padding: 20px;
+  gap: 14px;
+  padding: 0;
 }
 .to_do-list li {
   display: flex;
   align-items: center;
-  border-radius: 5px;
+  border-radius: 10px;
   justify-content: center;
+  transition: all 0.2s ease;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+.to_do-list li:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
 }
 .to_do-list .task-right {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 5px;
-  background-color: var(--background-color2);
-  padding: 10px;
-  height: 80px;
-  border: 1px solid #ccc;
-  border-radius: 5px 0 0 5px;
+  gap: 12px;
+  background-color: transparent;
+  padding: 12px 16px;
+  min-height: 80px;
+  border: none;
+  border-radius: 0;
+  flex: 1;
   min-width: 50%;
   max-width: 50%;
 }
 .to_do-list .task-right .task-text {
-  max-width: 500px;
-  overflow: auto;
+  max-width: 400px;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+.to_do-list .task-right .task-text input {
+  width: 100%;
+  max-width: 400px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-color);
+  font-family: inherit;
+  resize: none;
+  overflow: hidden;
+  min-height: 26px;
+  line-height: 1.4;
+  background-color: #fafafa;
+  transition: all 0.2s ease;
+}
+.to_do-list .task-right .task-text input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(238, 138, 44, 0.1);
+  background-color: #fff;
+}
+.to_do-list .task-right .task-text input:hover {
+  border-color: var(--primary-color);
+  background-color: #fff;
+  cursor: text;
 }
 .to_do-list .task-right p {
   margin: 10px;
@@ -209,20 +271,400 @@ body {
 .to_do-list .task-right .task-dueDate {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
 }
-.to_do-list .task-left {
+.to_do-list .task-right .task-dueDate label {
+  font-size: 12px;
+  color: #666;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.to_do-list .task-right .task-dueDate input {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  font-size: 13px;
+  background-color: #fafafa;
+  transition: all 0.2s ease;
+}
+.to_do-list .task-right .task-dueDate input:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(84, 183, 189, 0.1);
+}
+.to_do-list .task-right .task-dueDate input:hover {
+  border-color: var(--secondary-color);
+  background-color: #fff;
+  cursor: text;
+}
+.to_do-list .task-right-container {
   display: flex;
   flex-direction: row;
-  gap: 5px;
-  align-items: center;
-  height: 80px;
-  padding: 10px;
-  border-radius: 0 50px 50px 0;
+  gap: 16px;
+  align-items: flex-start;
+  justify-content: flex-end;
+  flex-wrap: wrap;
 }
-.to_do-list .task-left .task-checkbox-container {
+.to_do-list .task-right-container .task-checkbox-container {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
+}
+.to_do-list .task-right-container .task-checkbox-container input[type=checkbox] {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+.to_do-list .tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin: 0;
+}
+.to_do-list .tasks .task-checkbox-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+}
+.to_do-list .tasks .task-checkbox-container label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.to_do-list .tasks .task-checkbox-container svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--text-color);
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+}
+.to_do-list .tasks .task-checkbox-container input[type=checkbox] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--primary-color);
+  flex-shrink: 0;
+}
+.to_do-list .tasks .task-checkbox-container:hover svg {
+  opacity: 1;
+}
+.to_do-list .task-left {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: center;
+  min-height: 80px;
+  padding: 12px 16px;
+  border-radius: 0;
+  background-color: transparent;
+  flex-shrink: 0;
+}
+.to_do-list .task-left select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  font-size: 13px;
+  background-color: #fafafa;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.to_do-list .task-left select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(238, 138, 44, 0.1);
+  background-color: #fff;
+}
+.to_do-list .task-left select:hover {
+  border-color: var(--primary-color);
+  background-color: #fff;
+}
+.to_do-list .task-left .delete-button {
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+}
+.to_do-list .task-left .delete-button:hover {
+  transform: translateY(-2px);
+  background-color: rgba(0, 0, 0, 0.1);
+}
+.to_do-list .task-left .delete-button:hover svg {
+  fill: #ff595e;
+}
+.to_do-list .task-left .delete-button:active {
+  transform: translateY(0);
+}
+.to_do-list .task-left .delete-button svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--details-color2);
+  transition: all 0.2s ease;
+}
+
+/* Tablet and Mobile Responsive Styles */
+@media (max-width: 1024px) {
+  .task-right {
+    min-width: 60% !important;
+    max-width: 60% !important;
+  }
+  .task-text input {
+    max-width: 300px !important;
+  }
+}
+@media (max-width: 768px) {
+  /* Global adjustments */
+  * {
+    font-size: 13px;
+  }
+  /* Task Menu Styles */
+  .task-menu {
+    padding: 15px !important;
+    border-radius: 0;
+  }
+  .task-menu form {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .task-menu #task-input {
+    width: 100% !important;
+  }
+  .task-menu .add-task-input {
+    width: 100%;
+  }
+  .task-menu .task-counters {
+    gap: 10px;
+    font-size: 13px;
+    flex-wrap: wrap;
+  }
+  .task-menu .task-counters span {
+    padding: 2px 8px;
+  }
+  /* Filter Styles */
+  .task-filters {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 15px !important;
+  }
+  .task-filters .filter-options {
+    flex: 0 1 calc(50% - 4px);
+    min-width: 140px;
+    padding: 3px;
+    font-size: 12px;
+  }
+  .task-filters button {
+    flex: 0 1 calc(50% - 4px);
+    padding: 8px 10px;
+    font-size: 12px;
+    min-width: 140px;
+  }
+  /* Task List Styles */
+  .to_do-list {
+    padding: 15px !important;
+  }
+  .to_do-list ul {
+    padding: 10px;
+    gap: 17px;
+  }
+  .to_do-list li {
+    flex-direction: column;
+  }
+  .to_do-list .task-right {
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: auto;
+    padding: 8px;
+    border-radius: 5px;
+    gap: 8px;
+  }
+  .to_do-list .task-right .task-text {
+    width: 100%;
+    max-width: 100% !important;
+  }
+  .to_do-list .task-right .task-text input {
+    max-width: 100% !important;
+    font-size: 14px;
+    min-height: 20px;
+  }
+  .to_do-list .task-right .task-right-container {
+    width: 100%;
+    flex-direction: row;
+    gap: 10px;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  .to_do-list .task-right .task-right-container .task-dueDate {
+    flex: 1;
+    gap: 3px;
+  }
+  .to_do-list .task-right .task-right-container .task-dueDate label {
+    font-size: 12px;
+  }
+  .to_do-list .task-right .task-right-container .task-dueDate input {
+    font-size: 12px;
+    padding: 3px;
+  }
+  .to_do-list .task-right p {
+    margin: 5px;
+    font-size: 14px;
+  }
+  .to_do-list .tasks {
+    width: 100%;
+    margin: 0;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .to_do-list .tasks .task-checkbox-container {
+    gap: 4px;
+  }
+  .to_do-list .tasks .task-checkbox-container svg {
+    width: 16px;
+    height: 16px;
+  }
+  .to_do-list .tasks .task-checkbox-container input[type=checkbox] {
+    width: 14px;
+    height: 14px;
+  }
+  .to_do-list .task-left {
+    width: 100%;
+    height: auto;
+    padding: 8px;
+    border-radius: 5px;
+    gap: 8px;
+    flex-direction: row;
+    align-items: center;
+  }
+  .to_do-list .task-left select {
+    flex: 1;
+    min-width: 100px;
+    padding: 4px;
+    font-size: 12px;
+  }
+  .to_do-list .task-left .delete-button {
+    margin-right: 0;
+    padding: 2px;
+  }
+  .to_do-list .task-left .delete-button svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+/* Mobile Styles */
+@media (max-width: 480px) {
+  * {
+    font-size: 12px;
+  }
+  /* Task Menu */
+  .task-menu {
+    padding: 10px !important;
+  }
+  .task-menu .sub-error-container span {
+    font-size: 12px;
+  }
+  .task-menu button {
+    padding: 8px 15px;
+    font-size: 12px;
+  }
+  .task-menu .task-counters {
+    gap: 5px;
+    font-size: 11px;
+  }
+  .task-menu .task-counters span {
+    padding: 2px 6px;
+    font-size: 10px;
+  }
+  /* Filters */
+  .task-filters {
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px !important;
+  }
+  .task-filters .filter-options {
+    width: 100%;
+    min-width: auto;
+    flex: none;
+    font-size: 11px;
+    padding: 2px;
+  }
+  .task-filters button {
+    width: 100%;
+    padding: 6px 10px;
+    font-size: 11px;
+    min-width: auto;
+  }
+  /* Task List */
+  .to_do-list {
+    padding: 10px !important;
+  }
+  .to_do-list ul {
+    padding: 5px;
+  }
+  .to_do-list .task-right {
+    padding: 6px;
+    gap: 6px;
+  }
+  .to_do-list .task-right .task-text input {
+    font-size: 13px;
+    padding: 3px;
+    min-height: 18px;
+    max-width: 100% !important;
+  }
+  .to_do-list .task-right .task-right-container {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .to_do-list .task-right p {
+    margin: 3px;
+    font-size: 12px;
+  }
+  .to_do-list .tasks {
+    gap: 6px;
+  }
+  .to_do-list .tasks .task-checkbox-container {
+    gap: 3px;
+  }
+  .to_do-list .tasks .task-checkbox-container svg {
+    width: 14px;
+    height: 14px;
+  }
+  .to_do-list .tasks .task-checkbox-container input[type=checkbox] {
+    width: 12px;
+    height: 12px;
+  }
+  .to_do-list .task-left {
+    padding: 6px;
+    gap: 6px;
+  }
+  .to_do-list .task-left select {
+    min-width: 80px;
+    font-size: 11px;
+    padding: 3px;
+  }
+  .to_do-list .task-left .delete-button svg {
+    width: 14px;
+    height: 14px;
+  }
 }/*# sourceMappingURL=index.css.map */
